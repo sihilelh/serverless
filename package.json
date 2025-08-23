@@ -1,0 +1,10 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "Serverless workspace template for AWS by @sihilelh",
+  "scripts": {},
+  "keywords": [],
+  "author": "sihilelh",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.0"
+}

@@ -1,0 +1,1 @@
+// Generate a single handler for single resource group 
