@@ -1,8 +1,8 @@
 export interface Request {
   body: Record<string, any>;
-  query: Record<string, any>;
-  params: Record<string, any>;
-  headers: Record<string, any>;
+  query: Record<string, string | undefined>;
+  params: Record<string, string | undefined>;
+  headers: Record<string, string | undefined>;
   path: string;
   method: string;
 }

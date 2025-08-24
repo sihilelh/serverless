@@ -6,14 +6,22 @@ import {
   deleteStudent,
 } from "../controllers/student.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { RouteGroup } from "../common/types/route.interface";
 
-export const studentsRoutes = {
+// Root route for students
+export const studentRouteRoot = "/students";
+
+// Route config for students
+export const studentsRoutes: RouteGroup = {
   "/": {
     GET: {
       middlewares: [authMiddleware],
       handler: getAllStudents,
     },
-    POST: createStudent,
+    POST: {
+      middlewares: [authMiddleware],
+      handler: createStudent,
+    },
   },
   "/{studentId}": {
     GET: {
