@@ -3,11 +3,14 @@ import { AttributeType, Table } from "aws-cdk-lib/aws-dynamodb";
 import { APP_CONFIG } from "../../config/appConfig";
 
 export class CreateDynamoDBTables {
+  public readonly tables: Table[];
   constructor(stack: Stack) {
-    const studentsTable = this.createTables(stack, {
-      tableName: "Students",
-      partitionKey: { name: "id", type: AttributeType.STRING },
-    });
+    this.tables = [
+      this.createTables(stack, {
+        tableName: "Students",
+        partitionKey: { name: "id", type: AttributeType.STRING },
+      }),
+    ];
   }
 
   private createTables(

@@ -20,3 +20,8 @@ export interface RouteGroup {
     [method: string]: Route;
   };
 }
+
+export interface RouteConfig {
+  routeRoot: string;
+  cognitoAuthorizer?: boolean;
+}

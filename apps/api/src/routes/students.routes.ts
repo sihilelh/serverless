@@ -6,10 +6,13 @@ import {
   deleteStudent,
 } from "../controllers/student.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { RouteGroup } from "../common/types/route.interface";
+import { RouteGroup, RouteConfig } from "../common/types/route.interface";
 
 // Root route for students
-export const studentRouteRoot = "/students";
+export const studentRouteConfig: RouteConfig = {
+  routeRoot: "/students",
+  cognitoAuthorizer: true,
+};
 
 // Route config for students
 export const studentsRoutes: RouteGroup = {

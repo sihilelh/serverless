@@ -2,7 +2,7 @@ import {
   APIGatewayProxyEventV2,
   APIGatewayProxyEventQueryStringParameters,
 } from "aws-lambda";
-import { studentRouteRoot, studentsRoutes } from "../routes/students.routes";
+import { studentRouteConfig, studentsRoutes } from "../routes/students.routes";
 import { Request, Response } from "../common/types/http.interface";
 import {
   generateRequestObject,
@@ -20,7 +20,7 @@ export const handler = async (event: APIGatewayProxyEventV2) => {
 
     const availableRouteKeys = generateRouteKeysFromRoutes(
       studentsRoutes,
-      studentRouteRoot
+      studentRouteConfig.routeRoot
     );
 
     if (!availableRouteKeys.some((route) => route.key === routeKey)) {

@@ -7,16 +7,23 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { generateRouteInfoFromRoutes } from "../../src/utils/lambda.utils";
 import {
   studentsRoutes,
-  studentRouteRoot,
+  studentRouteConfig,
 } from "../../src/routes/students.routes";
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
+import { CommonResourceStack } from "../commonResourceStack";
+import { HttpUserPoolAuthorizer } from "aws-cdk-lib/aws-apigatewayv2-authorizers";
 
 export class ApiGatewayLoader {
   private httpApi: HttpApi;
+  private httpAuthorizer: HttpUserPoolAuthorizer;
 
-  constructor(stack: Stack) {
+  constructor(stack: Stack, commonResourceStack: CommonResourceStack) {
     this.createApiGateway(stack);
-    this.initStudentHandler(stack);
+    this.httpAuthorizer = this.createCognitoAuthorizer(
+      stack,
+      commonResourceStack
+    );
+    this.initStudentHandler(stack, commonResourceStack);
 
     // Output the api gateway url
     new CfnOutput(stack, `${APP_CONFIG.awsResourcePrefix}-ApiGatewayUrl`, {
@@ -42,7 +49,10 @@ export class ApiGatewayLoader {
   }
 
   // We have to create the api gateway routes and lambda functions based on our main routes
-  private initStudentHandler(stack: Stack) {
+  private initStudentHandler(
+    stack: Stack,
+    commonResourceStack: CommonResourceStack
+  ) {
     // Change the handler name to the resource name
     const handlerName = "StudentsHandler";
 
@@ -57,12 +67,13 @@ export class ApiGatewayLoader {
       }
     );
 
-    // TODO: If there is any permission that is required for the handler, we have to add it here
+    // Granting permissions to the lambda function
+    this.grantLambdaPermissions(stack, studentHandler, commonResourceStack);
 
     // Change the route details to relevant to the handler
     const routeInfo = generateRouteInfoFromRoutes(
       studentsRoutes,
-      studentRouteRoot
+      studentRouteConfig.routeRoot
     );
 
     for (const route of routeInfo) {
@@ -73,7 +84,40 @@ export class ApiGatewayLoader {
           `${APP_CONFIG.awsResourcePrefix}-${handlerName}-Integration`,
           studentHandler
         ),
+        authorizer: studentRouteConfig.cognitoAuthorizer
+          ? this.httpAuthorizer
+          : undefined,
       });
     }
+  }
+
+  private grantLambdaPermissions(
+    stack: Stack,
+    lambdaFunction: NodejsFunction,
+    commonResourceStack: CommonResourceStack
+  ) {
+    // Granting dynamo db permissions to the lambda function
+    for (const table of commonResourceStack.dynamoDBTables.tables) {
+      table.grantReadWriteData(lambdaFunction);
+    }
+
+    // Granting s3 permissions to the lambda function
+    commonResourceStack.s3Buckets.appBucket.grantReadWrite(lambdaFunction);
+  }
+
+  private createCognitoAuthorizer(
+    stack: Stack,
+    commonResourceStack: CommonResourceStack
+  ) {
+    const httpAuthorizer = new HttpUserPoolAuthorizer(
+      `${APP_CONFIG.awsResourcePrefix}-HttpApiGatewayAuthorizer`,
+      commonResourceStack.cognitoUserPool.userPool,
+      {
+        authorizerName: `${APP_CONFIG.awsResourcePrefix}-HttpApiGatewayAuthorizer`,
+        userPoolClients: [commonResourceStack.cognitoUserPool.userPoolClient],
+      }
+    );
+
+    return httpAuthorizer;
   }
 }

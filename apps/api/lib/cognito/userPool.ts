@@ -10,9 +10,9 @@ import {
 import { APP_CONFIG } from "../../config/appConfig";
 
 export class CognitoUserPool {
-  private userPool: UserPool;
-  private userPoolClient: UserPoolClient;
-  private userPoolDomain: CfnUserPoolDomain;
+  public readonly userPool: UserPool;
+  public readonly userPoolClient: UserPoolClient;
+  public readonly userPoolDomain: CfnUserPoolDomain;
 
   constructor(stack: Stack) {
     // Creating the User Pool

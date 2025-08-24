@@ -13,7 +13,10 @@ const commonResourceStack = new CommonResourceStack(
 
 const apiResourceStack = new ApiResourceStack(
   app,
-  `${APP_CONFIG.awsResourcePrefix}-ApiResourceStack`
+  `${APP_CONFIG.awsResourcePrefix}-ApiResourceStack`,
+  {
+    commonResourceStack: commonResourceStack,
+  }
 );
 
 apiResourceStack.addDependency(commonResourceStack);
