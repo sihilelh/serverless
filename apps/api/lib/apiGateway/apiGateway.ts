@@ -1,8 +1,7 @@
-import { Stack } from "aws-cdk-lib";
+import { CfnOutput, Stack } from "aws-cdk-lib";
 import { CorsHttpMethod, HttpApi } from "aws-cdk-lib/aws-apigatewayv2";
 import { APP_CONFIG } from "../../config/appConfig";
-import fs from "fs";
-import { NodejsFunction, SourceMapMode } from "aws-cdk-lib/aws-lambda-nodejs";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import path from "path";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { generateRouteInfoFromRoutes } from "../../src/utils/lambda.utils";
@@ -18,6 +17,11 @@ export class ApiGatewayLoader {
   constructor(stack: Stack) {
     this.createApiGateway(stack);
     this.initStudentHandler(stack);
+
+    // Output the api gateway url
+    new CfnOutput(stack, `${APP_CONFIG.awsResourcePrefix}-ApiGatewayUrl`, {
+      value: this.httpApi.url ?? "",
+    });
   }
 
   private createApiGateway(stack: Stack) {

@@ -4,4 +4,5 @@ export const APP_CONFIG = {
   cognitoDomainPrefix: "workspace-cognito",
   cognitoUserGroups: ["admin", "user"],
   allowedOrigins: ["https://localhost:3000"],
+  uniqueId: "23f12a4b", // This will be used to make the resource names unique
 };

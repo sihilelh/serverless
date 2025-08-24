@@ -1,0 +1,41 @@
+import { CfnOutput, RemovalPolicy, Stack } from "aws-cdk-lib";
+import { AttributeType, Table } from "aws-cdk-lib/aws-dynamodb";
+import { APP_CONFIG } from "../../config/appConfig";
+
+export class CreateDynamoDBTables {
+  constructor(stack: Stack) {
+    const studentsTable = this.createTables(stack, {
+      tableName: "Students",
+      partitionKey: { name: "id", type: AttributeType.STRING },
+    });
+  }
+
+  private createTables(
+    stack: Stack,
+    options: {
+      tableName: string;
+      partitionKey: { name: string; type: AttributeType };
+    }
+  ) {
+    const table = new Table(
+      stack,
+      `${APP_CONFIG.awsResourcePrefix}-${options.tableName}Table`,
+      {
+        tableName: options.tableName,
+        partitionKey: options.partitionKey,
+        removalPolicy: RemovalPolicy.DESTROY,
+      }
+    );
+
+    // Output the table name
+    new CfnOutput(
+      stack,
+      `${APP_CONFIG.awsResourcePrefix}-${options.tableName}TableName`,
+      {
+        value: table.tableName,
+      }
+    );
+
+    return table;
+  }
+}
