@@ -4,13 +4,17 @@ import { APP_CONFIG } from "../../config/appConfig";
 
 export class CreateDynamoDBTables {
   public readonly tables: Table[];
+  public readonly studentTable: Table;
   constructor(stack: Stack) {
-    this.tables = [
-      this.createTables(stack, {
-        tableName: "Students",
-        partitionKey: { name: "id", type: AttributeType.STRING },
-      }),
-    ];
+    const studentTable = this.createTables(stack, {
+      tableName: "Students",
+      partitionKey: { name: "id", type: AttributeType.STRING },
+    });
+
+    this.tables = [studentTable];
+
+    // Assigning the tables to single variables
+    this.studentTable = studentTable;
   }
 
   private createTables(

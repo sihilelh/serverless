@@ -5,8 +5,9 @@ import {
   updateStudent,
   deleteStudent,
 } from "../controllers/student.controller";
-import { authMiddleware } from "../middleware/auth.middleware";
+import { ValidateQueryParams, ValidateRequest } from "../middleware/validate.middleware";
 import { RouteGroup, RouteConfig } from "../common/types/route.interface";
+import { createStudentSchema, filterStudentDtoSchema, updateStudentDtoSchema } from "@workspace/types";
 
 // Root route for students
 export const studentRouteConfig: RouteConfig = {
@@ -18,25 +19,23 @@ export const studentRouteConfig: RouteConfig = {
 export const studentsRoutes: RouteGroup = {
   "/": {
     GET: {
-      middlewares: [authMiddleware],
+      middlewares: [ValidateQueryParams(filterStudentDtoSchema)],
       handler: getAllStudents,
     },
     POST: {
-      middlewares: [authMiddleware],
+      middlewares: [ValidateRequest(createStudentSchema)],
       handler: createStudent,
     },
   },
   "/{studentId}": {
     GET: {
-      middlewares: [authMiddleware],
       handler: getStudentById,
     },
     PUT: {
-      middlewares: [authMiddleware],
+      middlewares: [ValidateRequest(updateStudentDtoSchema)],
       handler: updateStudent,
     },
     DELETE: {
-      middlewares: [authMiddleware],
       handler: deleteStudent,
     },
   },

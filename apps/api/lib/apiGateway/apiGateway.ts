@@ -4,6 +4,7 @@ import { APP_CONFIG } from "../../config/appConfig";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import path from "path";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
+import { OutputFormat } from "aws-cdk-lib/aws-lambda-nodejs";
 import { generateRouteInfoFromRoutes } from "../../src/utils/lambda.utils";
 import {
   studentsRoutes,
@@ -12,6 +13,7 @@ import {
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { CommonResourceStack } from "../commonResourceStack";
 import { HttpUserPoolAuthorizer } from "aws-cdk-lib/aws-apigatewayv2-authorizers";
+import { Env } from "../../src/common/types/env.interface";
 
 export class ApiGatewayLoader {
   private httpApi: HttpApi;
@@ -64,6 +66,15 @@ export class ApiGatewayLoader {
         entry: path.resolve(__dirname, "../../src/handlers/students.ts"),
         handler: "handler",
         runtime: Runtime.NODEJS_20_X,
+        environment: this.generateLambdaEnv(commonResourceStack),
+        bundling: {
+          forceDockerBundling: false,
+          externalModules: ["@aws-sdk/*", "@smithy/*"],
+          nodeModules: ["ajv", "ajv-formats"],
+          tsconfig: path.resolve(__dirname, "../../tsconfig.json"),
+          format: OutputFormat.CJS,
+          target: "node20"
+        }
       }
     );
 
@@ -119,5 +130,14 @@ export class ApiGatewayLoader {
     );
 
     return httpAuthorizer;
+  }
+
+  private generateLambdaEnv(
+    commonResourceStack: CommonResourceStack
+  ): Record<string, string> {
+    return {
+      STUDENT_TABLE_NAME:
+        commonResourceStack.dynamoDBTables.studentTable.tableName,
+    };
   }
 }

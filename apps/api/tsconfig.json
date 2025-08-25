@@ -22,7 +22,11 @@
     "strictPropertyInitialization": false,
     "typeRoots": [
       "./node_modules/@types"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@workspace/types": ["../../libs/types/src/index.ts"]
+    }
   },
   "exclude": [
     "node_modules",
