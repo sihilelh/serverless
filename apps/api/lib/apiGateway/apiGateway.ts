@@ -13,7 +13,7 @@ import {
 import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import { CommonResourceStack } from "../commonResourceStack";
 import { HttpUserPoolAuthorizer } from "aws-cdk-lib/aws-apigatewayv2-authorizers";
-import { Env } from "../../src/common/types/env.interface";
+import { RouteConfig, RouteGroup } from "src/common/types/route.interface";
 
 export class ApiGatewayLoader {
   private httpApi: HttpApi;
@@ -25,7 +25,13 @@ export class ApiGatewayLoader {
       stack,
       commonResourceStack
     );
-    this.initStudentHandler(stack, commonResourceStack);
+
+    this.createHandler(stack, commonResourceStack, {
+      handlerName: "StudentsHandler",
+      handlerFileName: "students.ts",
+      routeGroup: studentsRoutes,
+      routeConfig: studentRouteConfig,
+    });
 
     // Output the api gateway url
     new CfnOutput(stack, `${APP_CONFIG.awsResourcePrefix}-ApiGatewayUrl`, {
@@ -50,20 +56,25 @@ export class ApiGatewayLoader {
     );
   }
 
-  // We have to create the api gateway routes and lambda functions based on our main routes
-  private initStudentHandler(
+  private createHandler(
     stack: Stack,
-    commonResourceStack: CommonResourceStack
+    commonResourceStack: CommonResourceStack,
+    options: {
+      handlerName: string;
+      handlerFileName: string;
+      routeGroup: RouteGroup;
+      routeConfig: RouteConfig;
+    }
   ) {
     // Change the handler name to the resource name
-    const handlerName = "StudentsHandler";
+    const handlerName = options.handlerName;
 
-    const studentHandler = new NodejsFunction(
+    const handler = new NodejsFunction(
       stack,
       `${APP_CONFIG.awsResourcePrefix}-${handlerName}`,
       {
         // Change the path to the handler file
-        entry: path.resolve(__dirname, "../../src/handlers/students.ts"),
+        entry: path.resolve(__dirname, "../../src/handlers", options.handlerFileName),
         handler: "handler",
         runtime: Runtime.NODEJS_20_X,
         environment: this.generateLambdaEnv(commonResourceStack),
@@ -79,12 +90,12 @@ export class ApiGatewayLoader {
     );
 
     // Granting permissions to the lambda function
-    this.grantLambdaPermissions(stack, studentHandler, commonResourceStack);
+    this.grantLambdaPermissions(stack, handler, commonResourceStack);
 
     // Change the route details to relevant to the handler
     const routeInfo = generateRouteInfoFromRoutes(
-      studentsRoutes,
-      studentRouteConfig.routeRoot
+      options.routeGroup,
+      options.routeConfig.routeRoot
     );
 
     for (const route of routeInfo) {
@@ -93,9 +104,9 @@ export class ApiGatewayLoader {
         methods: route.methods,
         integration: new HttpLambdaIntegration(
           `${APP_CONFIG.awsResourcePrefix}-${handlerName}-Integration`,
-          studentHandler
+          handler
         ),
-        authorizer: studentRouteConfig.cognitoAuthorizer
+        authorizer: options.routeConfig.cognitoAuthorizer
           ? this.httpAuthorizer
           : undefined,
       });
