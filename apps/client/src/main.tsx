@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css";
+import "@/assets/styles/global.css";
 import { ThemeProvider } from "./providers/themeProvider.tsx";
 import { AmplifyProvider } from "./providers/amplifyProvider.tsx";
 

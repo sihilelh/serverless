@@ -1,7 +1,17 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./fonts.css";
 
 @custom-variant dark (&:is(.dark *));
+
+body.dark select {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+@theme {
+  --default-font-family: "Geist", sans-serif;
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -117,4 +127,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+button {
+  cursor: pointer;
 }

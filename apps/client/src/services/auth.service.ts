@@ -1,15 +1,17 @@
 import {
   signIn,
-  signUp,
+  // signUp,
   signOut,
   resetPassword,
   confirmResetPassword,
   getCurrentUser,
+  confirmSignIn,
   type SignInInput,
-  type SignUpInput,
+  // type SignUpInput,
   type ResetPasswordInput,
   type ConfirmResetPasswordInput,
-  type AuthUser
+  type AuthUser,
+  type ConfirmSignInInput
 } from "aws-amplify/auth";
 
 export const signInService = async (signInInput: SignInInput) => {
@@ -22,15 +24,25 @@ export const signInService = async (signInInput: SignInInput) => {
   }
 };
 
-export const signUpService = async (signUpInput: SignUpInput) => {
+export const confirmSignInService = async (confirmSignInInput: ConfirmSignInInput) => {
   try {
-    const result = await signUp(signUpInput);
-    return result;
+    return await confirmSignIn(confirmSignInInput);
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+
+// Only use this if the user registration is opened to public in cognitoUserPool
+// export const signUpService = async (signUpInput: SignUpInput) => {
+//   try {
+//     const result = await signUp(signUpInput);
+//     return result;
+//   } catch (error) {
+//     console.error(error);
+//     throw error;
+//   }
+// };
 
 export const signOutService = async () => {
   try {
