@@ -21,6 +21,7 @@ export const InputPassword = ({
       <button
         onClick={() => setShowPassword((prev) => !prev)}
         className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground cursor-pointer"
+        type="button"
       >
         {showPassword ? (
           <EyeOffIcon className="size-4" />
