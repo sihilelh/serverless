@@ -4,6 +4,7 @@ import {
   confirmSignInService,
   resetPasswordService,
   signInService,
+  signOutService,
 } from "@/services/auth.service";
 import { getFormValues } from "@/utils/form.utils";
 import { useState } from "react";
@@ -29,6 +30,7 @@ export const LoginPage = () => {
   const handleLogin = async (data: { username: string; password: string }) => {
     setIsLoading(true);
     try {
+      await signOutService();
       const response = await signInService({
         username: data.username,
         password: data.password,

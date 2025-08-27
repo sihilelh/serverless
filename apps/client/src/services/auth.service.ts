@@ -5,6 +5,7 @@ import {
   resetPassword,
   confirmResetPassword,
   getCurrentUser,
+  fetchUserAttributes,
   confirmSignIn,
   type SignInInput,
   // type SignUpInput,
@@ -76,6 +77,16 @@ export const getCurrentUserService = async (): Promise<AuthUser> => {
   try {
     const user = await getCurrentUser();
     return user;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const fetchUserAttributesService = async () => {
+  try {
+    const attributes = await fetchUserAttributes();
+    return attributes;
   } catch (error) {
     console.error(error);
     throw error;
