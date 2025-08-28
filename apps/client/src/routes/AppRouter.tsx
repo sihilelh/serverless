@@ -16,9 +16,9 @@ export const AppRouter = () => {
           element={<ForgotPasswordPage />}
         />
 
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute allowedGroups={["admin", "user"]} />}>
-          <Route path="/" element={<DashboardPage />} />
+        {/* Protected Routes - Shown to all users */}
+        <Route element={<ProtectedRoute />}>
+          <Route path={ROUTES.DASHBOARD.HOME} element={<DashboardPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

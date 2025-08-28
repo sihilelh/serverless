@@ -22,6 +22,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/types/constants/routes.constants";
 import { toast } from "sonner";
 import { ConfirmSignInForm } from "./components/confirmSignInForm";
+import { AppLayout } from "@/layouts/app.layout";
+import { PageLayout } from "@/layouts/page.layout";
 
 export const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +38,7 @@ export const LoginPage = () => {
         password: data.password,
       });
       if (response.nextStep.signInStep === "DONE") {
-        navigate(ROUTES.DASHBOARD_REDIRECT);
+        navigate(ROUTES.DASHBOARD.HOME);
       }
       if (
         response.nextStep.signInStep ===
@@ -58,7 +60,7 @@ export const LoginPage = () => {
         challengeResponse: data.password,
       });
       if (response.nextStep.signInStep === "DONE") {
-        navigate(ROUTES.DASHBOARD_REDIRECT);
+        navigate(ROUTES.DASHBOARD.HOME);
       }
     } catch (error) {
       toast.error("Invalid password");
@@ -68,45 +70,47 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] w-full flex items-center justify-center">
-      <div className="w-full max-w-md">
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              <H2>{forceConfirmSignIn ? "Reset Password" : "Login"}</H2>
-            </CardTitle>
-            <CardDescription>
-              <Text variant={"muted"}>
-                {forceConfirmSignIn
-                  ? "Since this is the first time you are logging in, please reset your password"
-                  : "Please enter your credentials to continue"}
-              </Text>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {forceConfirmSignIn ? (
-              <ConfirmSignInForm
-                onSubmit={handleConfirmSignIn}
-                isLoading={isLoading}
-              />
-            ) : (
-              <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
-            )}
-          </CardContent>
-          <CardFooter>
-            <div className="w-full text-center">
-              <Text variant={"muted"} inline>
-                Forgot your password?
-              </Text>{" "}
-              <Link to="/forgot-password">
-                <Text variant={"muted"} italic inline>
-                  Reset password
+    <PageLayout>
+      <div className="h-[calc(100vh-4rem)] w-full flex items-center justify-center">
+        <div className="w-full max-w-md">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <H2>{forceConfirmSignIn ? "Reset Password" : "Login"}</H2>
+              </CardTitle>
+              <CardDescription>
+                <Text variant={"muted"}>
+                  {forceConfirmSignIn
+                    ? "Since this is the first time you are logging in, please reset your password"
+                    : "Please enter your credentials to continue"}
                 </Text>
-              </Link>
-            </div>
-          </CardFooter>
-        </Card>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {forceConfirmSignIn ? (
+                <ConfirmSignInForm
+                  onSubmit={handleConfirmSignIn}
+                  isLoading={isLoading}
+                />
+              ) : (
+                <LoginForm onSubmit={handleLogin} isLoading={isLoading} />
+              )}
+            </CardContent>
+            <CardFooter>
+              <div className="w-full text-center">
+                <Text variant={"muted"} inline>
+                  Forgot your password?
+                </Text>{" "}
+                <Link to="/forgot-password">
+                  <Text variant={"muted"} italic inline>
+                    Reset password
+                  </Text>
+                </Link>
+              </div>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
-    </div>
+    </PageLayout>
   );
 };
