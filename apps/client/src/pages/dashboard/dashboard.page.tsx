@@ -13,6 +13,7 @@ import { ROUTES } from "@/types/constants/routes.constants";
 import { toast } from "sonner";
 import { LogOut, Users, Settings, BarChart3 } from "lucide-react";
 import { AppLayout } from "@/layouts/app.layout";
+import { getAllStudents } from "@/services/student.service";
 
 export const DashboardPage = () => {
   const { user } = useAppStore();
@@ -20,9 +21,11 @@ export const DashboardPage = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOutService();
+      const students = await getAllStudents();
+      console.log(students);
+      // await signOutService();
       toast.success("Signed out successfully");
-      navigate(ROUTES.AUTH.LOGIN);
+      // navigate(ROUTES.AUTH.LOGIN);
     } catch (error) {
       toast.error("Failed to sign out");
     }
